@@ -23,11 +23,24 @@ The output file will contain correlations between the properties and data values
 - `-x`: Input file containing properties
 - `-o`: Output file for the correlations between properties and data values
 
-## Usage
-```
-EXEC -expl [arg0] -ncol_d [arg1] -ncol_p [arg2] -bw [arg3] -f [INPUT] -x [INPUT2] -o [OUTPUT]
-```
 ## Example
 ```
 python time-pos-corr-calc.py -expl 1 -ncol_d 1 -ncol_p 1 -bw 0.33 -f time_pressure.xvg -x time_position.xvg -o position_pressure.xvg
 ```
+
+
+# Calculate Correlation Script
+
+This script performs an example correlation analysis between two columns of data in GROMACS output files using the `time-pos-corr-calc.py` script.
+
+## Interpolation Methodology
+
+Due to the stochastic nature of molecular systems, potential energies (or pressures) can be highly variable and challenging to interpolate accurately using more sophisticated methods that assume a certain degree of smoothness. Nearest neighbor interpolation avoids introducing artificial assumptions about the underlying structure of the data and selects the closest value to the desired time point. This approach provides a more accurate interpolation of noisy data, particularly when the underlying structure is complex or poorly understood.
+
+## Usage
+
+1. Edit the `calculate_correlation.sh` file to set the correct `UPDATE_FREQUENCY_POSITION_PROPERTY` variable for your simulation which you can extract from your GROMACS mdp settings or the binary compiled tpr file.
+
+
+
+

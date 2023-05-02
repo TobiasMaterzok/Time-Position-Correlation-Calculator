@@ -2,7 +2,6 @@
 This script calculates the correlations between properties (e.g., position, time) and data values 
 (e.g., energy, pressure, number of hydrogen bonds) for data from molecular simulations (GROMACS, LAMMPS) or any time/position-correlated data.
 The script uses Welford's method to compute the standard deviation and bins the data to reduce noise and reveal patterns.
-
 Input file requirements:
 - f: Data values file (e.g., time_pressure.xvg): The first column represents a property (e.g., time, position), 
       and the following columns represent data values associated with that property.
@@ -10,7 +9,6 @@ Input file requirements:
 - x: Properties file (e.g., time_position.xvg): The first column represents one property (e.g., time), and the 
       following columns represent other properties (e.g., position). 
       Column units depend on the specific properties being analyzed (e.g., time in picoseconds, position in nanometers).
-
 Ensure that the units of the input files are consistent with each other and the specific application.
 Ensure that the first column in the data values file and the properties file is of the same property (e.g., either time or position)
 The output file will contain correlations between the properties and data values, with the same units as the input files.
@@ -103,12 +101,21 @@ value_arr = np.zeros((nbin + 10, prop_len + 10))
 # This can be used to analyze data from simulations, experiments or any time/position-correlated data
 # Binning is used to group data into intervals and reduce noise, simplifying the data for further analysis
 for i in range(prop_len):
-    for j in range(1, (prop_cols if expl else data_cols) + 1):
-        idx = int(prop_data[i, 1] * inv_bin_w)
-        if idx >= 0:
-            prop_count[idx] += 1
+    if(expl):
+        for j in range(1, prop_cols + 1):
+            idx = int(prop_data[i, 1] * inv_bin_w)
+            if(idx >= 0):
+                prop_count[idx] += 1
+                data_count[idx] += data[i, j]
+                value_arr[idx, int(prop_count[idx] - 1)] = data[i, j]
+    if not (expl):
+        for j in range(1, data_cols + 1):
+            idx = int(prop_data[i, 1] * inv_bin_w)
+            if(j == 1):
+                prop_count[idx] += 1
             data_count[idx] += data[i, j]
             value_arr[idx, int(prop_count[idx] - 1)] = data[i, j]
+
 
 bin_count = int((nbin + 1) / 2)
 res = np.zeros((bin_count, 3))
@@ -116,8 +123,12 @@ res = np.zeros((bin_count, 3))
 # Calculate correlations between properties and data values
 for idx in range(bin_count):
     r = bin_w * idx
+    if idx == 0 and prop_count[idx] >= 0:
+        res[idx, 0] = r
+        res[idx, 1] = data_count[idx].sum() / prop_count[idx]
+        res[idx, 2] = stddev(prop_count[idx], value_arr[idx])
     count = prop_count[2 * idx - 1: 2 * idx + 1].sum()
-    if count > 0:
+    elif count > 0:
         data_sum = data_count[2 * idx - 1: 2 * idx + 1].sum()
         res[idx, 0] = r
         res[idx, 1] = data_sum / count

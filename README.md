@@ -4,8 +4,6 @@ This script calculates the correlations between properties (e.g., position, time
 
 Was used for, e.g., computing [change in hydrogen bond number as a function of distance to a surface during non-equilibrium steered molecular dynamics](https://pubs.acs.org/doi/full/10.1021/acsnano.2c08627) or computing the [average dissipated adhesive energy during peel-off a mesoscale spatula model](https://onlinelibrary.wiley.com/doi/full/10.1002/smll.202201674).
 
-Binning is 
-
 ## Input File Requirements
 
 - `-f`: Data values file (e.g., time_pressure.xvg): The first column represents a property (e.g., time, position), and the following columns represent data values associated with that property. Column units depend on the data being analyzed (e.g., time in picoseconds, pressure in bar, stress in pascals).
